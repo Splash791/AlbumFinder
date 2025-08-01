@@ -3,6 +3,7 @@ import './App.css'
 import {FormControl, InputGroup, Container, Button} from "react-bootstrap";
 import {useState, useEffect} from "react";
 
+
 const clientId = import.meta.env.VITE_CLIENT_ID;
 const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
 
@@ -13,6 +14,7 @@ function App() {
   
   const [searchInput, setSearchInput] = useState("");
   const [accessToken, setAccessToken] = useState("");
+  const [albums, setAlbums] = useState([]);
 
   useEffect(() => {
     let authParms = {
@@ -49,9 +51,19 @@ function App() {
     .then((data) => {
         return data.artists.items[0].id;
       });
+    
+    await fetch(
+      "https://api.spotify.com/v1/artists/" + artistID + "/albums?include_groups=album,single&limit=50",
+      artistParamas
+    )
+    .then((result) => result.json())
+    .then((data) => {
+        setAlbums(data.items);
+      });
 
     console.log("Search Input: " + searchInput);
     console.log("Artist ID: " + artistID);
+    console.log("Albums: ", albums);
   }
 
   return (
